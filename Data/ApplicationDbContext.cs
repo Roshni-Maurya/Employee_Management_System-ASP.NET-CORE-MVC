@@ -12,6 +12,7 @@ namespace Employee_Management_System.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -33,6 +34,8 @@ namespace Employee_Management_System.Data
                 .WithMany(e => e.LeaveRequests)
                 .HasForeignKey(l => l.EmployeeId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<AuditLog>().HasIndex(a => a.Timestamp);
 
             builder.Entity<Department>().HasData(
                 new Department { Id = 1, Name = "HR", Description = "Human Resources" },

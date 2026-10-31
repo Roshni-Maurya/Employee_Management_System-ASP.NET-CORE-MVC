@@ -11,11 +11,13 @@ namespace Employee_Management_System.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmailService _email;
+        private readonly IAuditService _audit;
 
-        public LeavesController(ApplicationDbContext context, IEmailService email)
+        public LeavesController(ApplicationDbContext context, IEmailService email, IAuditService audit)
         {
             _context = context;
             _email = email;
+            _audit = audit;
         }
 
         public async Task<IActionResult> Index(string? status)
@@ -38,16 +40,21 @@ namespace Employee_Management_System.Controllers
                 .FirstOrDefaultAsync(l => l.Id == id);
             if (leave == null || leave.Employee == null) return NotFound();
 
-            // Ek baar decide ho gayi leave dobara badli nahi ja sakti
+            // Sirf Pending leave decide hoti hai (Cancelled ya pehle se decided nahi)
             if (leave.Status != "Pending")
             {
-                TempData["Error"] = "This leave has already been decided.";
+                TempData["Error"] = "This leave is no longer pending (already decided or cancelled by the employee).";
                 return RedirectToAction(nameof(Index));
             }
 
             leave.Status = status;
             leave.AdminRemark = string.IsNullOrWhiteSpace(remark) ? null : remark.Trim();
             await _context.SaveChangesAsync();
+
+            await _audit.LogAsync($"Leave {status}", "LeaveRequest", leave.Id.ToString(),
+                $"{leave.Employee.EmployeeCode} {leave.Employee.FullName}: {leave.LeaveType} " +
+                $"{leave.FromDate:dd MMM yyyy} to {leave.ToDate:dd MMM yyyy}" +
+                (leave.AdminRemark != null ? $" | Remark: {leave.AdminRemark}" : ""));
 
             bool sent = await _email.SendLeaveDecisionAsync(leave, leave.Employee);
 

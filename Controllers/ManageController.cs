@@ -1,4 +1,5 @@
 using Employee_Management_System.Models;
+using Employee_Management_System.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +11,15 @@ namespace Employee_Management_System.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IAuditService _audit;
 
         public ManageController(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IAuditService audit)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _audit = audit;
         }
 
         // ---------- Admin: naam aur Gmail badalna ----------
@@ -62,6 +66,7 @@ namespace Employee_Management_System.Controllers
             }
 
             await _signInManager.RefreshSignInAsync(user);   // login cookie nayi detail ke saath
+            await _audit.LogAsync("Admin Profile Updated", "User", user.Id, $"Name: {user.FullName}, Email: {user.Email}");
             TempData["Success"] = "Profile updated. Use the new email to login next time.";
             return RedirectToAction(nameof(Profile));
         }
@@ -85,6 +90,7 @@ namespace Employee_Management_System.Controllers
             }
 
             await _signInManager.RefreshSignInAsync(user);
+            await _audit.LogAsync("Password Changed", "User", user.Id);
             TempData["Success"] = "Password changed successfully.";
             return RedirectToAction(nameof(ChangePassword));
         }

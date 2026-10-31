@@ -1,5 +1,6 @@
 using Employee_Management_System.Data;
 using Employee_Management_System.Models;
+using Employee_Management_System.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,13 @@ namespace Employee_Management_System.Controllers
     public class DepartmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        public DepartmentsController(ApplicationDbContext context) => _context = context;
+        private readonly IAuditService _audit;
+
+        public DepartmentsController(ApplicationDbContext context, IAuditService audit)
+        {
+            _context = context;
+            _audit = audit;
+        }
 
         public async Task<IActionResult> Index()
         {
@@ -33,6 +40,7 @@ namespace Employee_Management_System.Controllers
 
             _context.Departments.Add(d);
             await _context.SaveChangesAsync();
+            await _audit.LogAsync("Department Created", "Department", d.Id.ToString(), d.Name);
             TempData["Success"] = "Department added.";
             return RedirectToAction(nameof(Index));
         }
@@ -55,9 +63,13 @@ namespace Employee_Management_System.Controllers
             var existing = await _context.Departments.FindAsync(d.Id);
             if (existing == null) return NotFound();
 
+            string oldName = existing.Name;
             existing.Name = d.Name;
             existing.Description = d.Description;
             await _context.SaveChangesAsync();
+
+            await _audit.LogAsync("Department Updated", "Department", d.Id.ToString(),
+                oldName == d.Name ? d.Name : $"Name: {oldName} -> {d.Name}");
             TempData["Success"] = "Department updated.";
             return RedirectToAction(nameof(Index));
         }
@@ -74,8 +86,10 @@ namespace Employee_Management_System.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            string name = d.Name;
             _context.Departments.Remove(d);
             await _context.SaveChangesAsync();
+            await _audit.LogAsync("Department Deleted", "Department", id.ToString(), name);
             TempData["Success"] = "Department deleted.";
             return RedirectToAction(nameof(Index));
         }

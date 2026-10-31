@@ -22,6 +22,7 @@ else
       </div>
     }
   }
+
   <div class="row g-3">
     <div class="col-md-8">
       <div class="card shadow-sm"><div class="card-header fw-bold">My Profile</div><div class="card-body">
@@ -35,6 +36,24 @@ else
           <dt class="col-sm-4">Address</dt><dd class="col-sm-8">@Model.Address</dd>
         </dl>
       </div></div>
+
+      <div class="card shadow-sm mt-3">
+        <div class="card-header fw-bold">Leave Balance (@DateTime.Today.Year)</div>
+        <table class="table mb-0">
+          <thead><tr><th>Type</th><th>Total</th><th>Used</th><th>Left</th></tr></thead>
+          <tbody>
+          @foreach (LeaveBalanceItem b in ViewBag.Balances)
+          {
+            <tr>
+              <td>@b.Type</td><td>@b.Quota</td><td>@b.Used</td>
+              <td><span class="badge bg-@(b.Remaining == 0 ? "danger" : "success")">@b.Remaining</span></td>
+            </tr>
+          }
+          <tr><td>Unpaid</td><td colspan="3" class="text-muted">No limit</td></tr>
+          </tbody>
+        </table>
+        <div class="card-footer small text-muted">Pending and approved leaves are counted. Rejected and cancelled leaves are not.</div>
+      </div>
     </div>
     <div class="col-md-4">
       <div class="card text-bg-warning mb-3"><div class="card-body"><div class="small">Pending Leaves</div><div class="fs-3 fw-bold">@ViewBag.Pending</div></div></div>

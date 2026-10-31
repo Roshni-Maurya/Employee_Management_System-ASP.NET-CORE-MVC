@@ -7,6 +7,7 @@
   <a class="btn btn-outline-dark @(current == "Pending" ? "active" : "")" asp-action="Index" asp-route-status="Pending">Pending</a>
   <a class="btn btn-outline-dark @(current == "Approved" ? "active" : "")" asp-action="Index" asp-route-status="Approved">Approved</a>
   <a class="btn btn-outline-dark @(current == "Rejected" ? "active" : "")" asp-action="Index" asp-route-status="Rejected">Rejected</a>
+  <a class="btn btn-outline-dark @(current == "Cancelled" ? "active" : "")" asp-action="Index" asp-route-status="Cancelled">Cancelled</a>
 </div>
 
 <div class="card"><div class="table-responsive"><table class="table align-middle mb-0">
@@ -14,7 +15,7 @@
   <tbody>
   @foreach (var l in Model)
   {
-    var cls = l.Status == "Approved" ? "success" : l.Status == "Rejected" ? "danger" : "warning text-dark";
+    var cls = l.Status == "Approved" ? "success" : l.Status == "Rejected" ? "danger" : l.Status == "Cancelled" ? "secondary" : "warning text-dark";
     <tr>
       <td>@l.Employee?.FullName<br /><small class="text-muted">@l.Employee?.EmployeeCode</small></td>
       <td>@l.LeaveType</td>

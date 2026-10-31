@@ -93,3 +93,14 @@ namespace Employee_Management_System.Models
         public string CurrentPassword { get; set; } = "";
     }
 }
+
+namespace Employee_Management_System.Models
+{
+    public class LeaveBalanceItem
+    {
+        public string Type { get; set; } = "";
+        public int Quota { get; set; }
+        public int Used { get; set; }
+        public int Remaining => Math.Max(Quota - Used, 0);
+    }
+}

@@ -1,3 +1,7 @@
+# Intallation packeages
+1. 
+
+
 # Employee Management System - Email + Security Guide
 
 ## PART 1: Setup (sirf ek baar)

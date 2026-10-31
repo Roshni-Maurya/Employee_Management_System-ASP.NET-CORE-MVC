@@ -6,17 +6,28 @@
   <a class="btn btn-primary" asp-action="ApplyLeave">+ Apply Leave</a>
 </div>
 
-<div class="card"><table class="table mb-0">
-  <thead><tr><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Admin Remark</th></tr></thead>
+<div class="card"><div class="table-responsive"><table class="table mb-0 align-middle">
+  <thead><tr><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Admin Remark</th><th>Action</th></tr></thead>
   <tbody>
   @foreach (var l in Model)
   {
-    var cls = l.Status == "Approved" ? "success" : l.Status == "Rejected" ? "danger" : "warning text-dark";
-    <tr class="@(l.Status == "Rejected" ? "table-danger" : l.Status == "Approved" ? "table-success" : "")">
+    var cls = l.Status == "Approved" ? "success" : l.Status == "Rejected" ? "danger" : l.Status == "Cancelled" ? "secondary" : "warning text-dark";
+    var rowCls = l.Status == "Rejected" ? "table-danger" : l.Status == "Approved" ? "table-success" : "";
+    <tr class="@rowCls">
       <td>@l.LeaveType</td><td>@l.FromDate.ToString("dd MMM yyyy")</td><td>@l.ToDate.ToString("dd MMM yyyy")</td>
       <td>@l.Days</td><td>@l.Reason</td><td><span class="badge bg-@cls">@l.Status</span></td><td>@l.AdminRemark</td>
+      <td class="text-nowrap">
+        @if (l.Status == "Pending")
+        {
+          <a class="btn btn-sm btn-outline-primary" asp-action="EditLeave" asp-route-id="@l.Id">Edit</a>
+          <form asp-action="CancelLeave" method="post" class="d-inline" onsubmit="return confirm('Cancel this leave request?');">
+            <input type="hidden" name="id" value="@l.Id" />
+            <button class="btn btn-sm btn-outline-danger">Cancel</button>
+          </form>
+        }
+      </td>
     </tr>
   }
-  @if (!Model.Any()) { <tr><td colspan="7" class="text-center text-muted py-4">No leave requests yet.</td></tr> }
+  @if (!Model.Any()) { <tr><td colspan="8" class="text-center text-muted py-4">No leave requests yet.</td></tr> }
   </tbody>
-</table></div>
+</table></div></div>

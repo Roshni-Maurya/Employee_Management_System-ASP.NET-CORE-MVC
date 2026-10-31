@@ -15,16 +15,19 @@ namespace Employee_Management_System.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
         private readonly IEmailService _email;
+        private readonly IAuditService _audit;
 
         public AccountController(UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ApplicationDbContext context,
-            IEmailService email)
+            IEmailService email,
+            IAuditService audit)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _context = context;
             _email = email;
+            _audit = audit;
         }
 
         // ---------------- Register ----------------
@@ -58,6 +61,8 @@ namespace Employee_Management_System.Controllers
             {
                 await _userManager.AddToRoleAsync(user, "User");
                 await _signInManager.SignInAsync(user, isPersistent: false);
+                await _audit.LogAsync("Employee Registered", "User", user.Id,
+                    $"{emp.EmployeeCode} - {emp.FullName}", model.Email);
                 return RedirectToAction("Index", "User");
             }
 
@@ -80,6 +85,8 @@ namespace Employee_Management_System.Controllers
 
             if (result.Succeeded)
             {
+                await _audit.LogAsync("Login Success", "Account", null, null, model.Email);
+
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user != null && await _userManager.IsInRoleAsync(user, "Admin"))
                     return RedirectToAction("Index", "Admin");
@@ -89,10 +96,12 @@ namespace Employee_Management_System.Controllers
 
             if (result.IsLockedOut)
             {
+                await _audit.LogAsync("Login Locked", "Account", null, "Account locked after too many failed attempts", model.Email);
                 ModelState.AddModelError("", "Too many failed attempts. Account locked for 15 minutes.");
                 return View(model);
             }
 
+            await _audit.LogAsync("Login Failed", "Account", null, "Wrong email or password", model.Email);
             ModelState.AddModelError("", "Invalid login attempt.");
             return View(model);
         }
@@ -100,6 +109,9 @@ namespace Employee_Management_System.Controllers
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
+            if (User.Identity?.IsAuthenticated == true)
+                await _audit.LogAsync("Logout", "Account");
+
             await _signInManager.SignOutAsync();
             return RedirectToAction("Login");
         }
@@ -121,6 +133,7 @@ namespace Employee_Management_System.Controllers
                     new { email = user.Email, token }, Request.Scheme)!;
 
                 await _email.SendPasswordResetAsync(user.Email!, user.FullName, link);
+                await _audit.LogAsync("Password Reset Requested", "Account", user.Id, null, user.Email);
             }
 
             // Email system mein ho ya na ho, message hamesha same (user enumeration se bachav)
@@ -152,6 +165,7 @@ namespace Employee_Management_System.Controllers
             if (result.Succeeded)
             {
                 await _userManager.SetLockoutEndDateAsync(user, null);   // lock ho to khul jaye
+                await _audit.LogAsync("Password Reset Done", "Account", user.Id, null, user.Email);
                 return RedirectToAction(nameof(ResetPasswordConfirmation));
             }
 

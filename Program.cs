@@ -58,6 +58,10 @@ builder.Services.AddAuthorization(options =>
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+// 6) Audit log (kisne kya badla)
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IAuditService, AuditService>();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())

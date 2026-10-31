@@ -1,0 +1,48 @@
+@model Employee
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "Add Employee" : "Edit Employee";
+}
+
+<div class="card shadow-sm"><div class="card-body p-4">
+  <h4 class="mb-3">@ViewData["Title"]</h4>
+  <form asp-action="@(isNew ? "Create" : "Edit")" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row g-3">
+      <div class="col-md-4"><label asp-for="EmployeeCode" class="form-label"></label>
+        <input asp-for="EmployeeCode" class="form-control" /><span asp-validation-for="EmployeeCode" class="text-danger"></span></div>
+      <div class="col-md-4"><label asp-for="FullName" class="form-label"></label>
+        <input asp-for="FullName" class="form-control" /><span asp-validation-for="FullName" class="text-danger"></span></div>
+      <div class="col-md-4"><label asp-for="Gender" class="form-label"></label>
+        <select asp-for="Gender" class="form-select">
+          <option value="">-- Select --</option><option>Male</option><option>Female</option><option>Other</option>
+        </select><span asp-validation-for="Gender" class="text-danger"></span></div>
+
+      <div class="col-md-4"><label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" /><span asp-validation-for="Email" class="text-danger"></span></div>
+      <div class="col-md-4"><label asp-for="Phone" class="form-label"></label>
+        <input asp-for="Phone" class="form-control" /><span asp-validation-for="Phone" class="text-danger"></span></div>
+      <div class="col-md-4"><label asp-for="DateOfJoining" class="form-label"></label>
+        <input asp-for="DateOfJoining" class="form-control" /><span asp-validation-for="DateOfJoining" class="text-danger"></span></div>
+
+      <div class="col-md-4"><label asp-for="DepartmentId" class="form-label"></label>
+        <select asp-for="DepartmentId" class="form-select" asp-items="@ViewBag.Departments"><option value="">-- Select --</option></select>
+        <span asp-validation-for="DepartmentId" class="text-danger"></span></div>
+      <div class="col-md-4"><label asp-for="Designation" class="form-label"></label>
+        <input asp-for="Designation" class="form-control" /><span asp-validation-for="Designation" class="text-danger"></span></div>
+      <div class="col-md-4"><label asp-for="Salary" class="form-label"></label>
+        <input asp-for="Salary" class="form-control" /><span asp-validation-for="Salary" class="text-danger"></span></div>
+
+      <div class="col-md-8"><label asp-for="Address" class="form-label"></label>
+        <input asp-for="Address" class="form-control" /><span asp-validation-for="Address" class="text-danger"></span></div>
+      <div class="col-md-4 d-flex align-items-end">
+        <div class="form-check"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label"></label></div>
+      </div>
+    </div>
+    <div class="mt-4">
+      <button class="btn btn-primary" type="submit">Save</button>
+      <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+    </div>
+  </form>
+</div></div>

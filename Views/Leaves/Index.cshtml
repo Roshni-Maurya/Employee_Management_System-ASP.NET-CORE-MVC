@@ -1,0 +1,41 @@
+@model List<LeaveRequest>
+@{ ViewData["Title"] = "Leave Requests"; string? current = ViewBag.Status; }
+
+<h3 class="mb-3">Leave Requests</h3>
+<div class="mb-3 btn-group">
+  <a class="btn btn-outline-dark @(current == null ? "active" : "")" asp-action="Index">All</a>
+  <a class="btn btn-outline-dark @(current == "Pending" ? "active" : "")" asp-action="Index" asp-route-status="Pending">Pending</a>
+  <a class="btn btn-outline-dark @(current == "Approved" ? "active" : "")" asp-action="Index" asp-route-status="Approved">Approved</a>
+  <a class="btn btn-outline-dark @(current == "Rejected" ? "active" : "")" asp-action="Index" asp-route-status="Rejected">Rejected</a>
+</div>
+
+<div class="card"><div class="table-responsive"><table class="table align-middle mb-0">
+  <thead><tr><th>Employee</th><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Status</th><th>Action</th></tr></thead>
+  <tbody>
+  @foreach (var l in Model)
+  {
+    var cls = l.Status == "Approved" ? "success" : l.Status == "Rejected" ? "danger" : "warning text-dark";
+    <tr>
+      <td>@l.Employee?.FullName<br /><small class="text-muted">@l.Employee?.EmployeeCode</small></td>
+      <td>@l.LeaveType</td>
+      <td>@l.FromDate.ToString("dd MMM") - @l.ToDate.ToString("dd MMM yyyy")</td>
+      <td>@l.Days</td>
+      <td>@l.Reason</td>
+      <td><span class="badge bg-@cls">@l.Status</span></td>
+      <td>
+        @if (l.Status == "Pending")
+        {
+          <form asp-action="Decide" method="post" class="d-flex gap-1">
+            <input type="hidden" name="id" value="@l.Id" />
+            <input name="remark" class="form-control form-control-sm" placeholder="Remark" />
+            <button name="status" value="Approved" class="btn btn-sm btn-success">Approve</button>
+            <button name="status" value="Rejected" class="btn btn-sm btn-danger">Reject</button>
+          </form>
+        }
+        else { <small class="text-muted">@l.AdminRemark</small> }
+      </td>
+    </tr>
+  }
+  @if (!Model.Any()) { <tr><td colspan="7" class="text-center text-muted py-4">No leave requests.</td></tr> }
+  </tbody>
+</table></div></div>

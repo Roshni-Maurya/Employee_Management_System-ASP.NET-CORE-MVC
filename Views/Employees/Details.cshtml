@@ -1,0 +1,36 @@
+@model Employee
+@{ ViewData["Title"] = "Employee Details"; }
+
+<div class="card shadow-sm mb-4"><div class="card-body p-4">
+  <div class="d-flex justify-content-between">
+    <h4>@Model.FullName <small class="text-muted">(@Model.EmployeeCode)</small></h4>
+    <div>
+      <a class="btn btn-outline-primary btn-sm" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+      <a class="btn btn-secondary btn-sm" asp-action="Index">Back</a>
+    </div>
+  </div>
+  <hr />
+  <dl class="row mb-0">
+    <dt class="col-sm-3">Email</dt><dd class="col-sm-9">@Model.Email</dd>
+    <dt class="col-sm-3">Phone</dt><dd class="col-sm-9">@Model.Phone</dd>
+    <dt class="col-sm-3">Gender</dt><dd class="col-sm-9">@Model.Gender</dd>
+    <dt class="col-sm-3">Department</dt><dd class="col-sm-9">@Model.Department?.Name</dd>
+    <dt class="col-sm-3">Designation</dt><dd class="col-sm-9">@Model.Designation</dd>
+    <dt class="col-sm-3">Salary</dt><dd class="col-sm-9">@Model.Salary.ToString("N2")</dd>
+    <dt class="col-sm-3">Joined On</dt><dd class="col-sm-9">@Model.DateOfJoining.ToString("dd MMM yyyy")</dd>
+    <dt class="col-sm-3">Address</dt><dd class="col-sm-9">@Model.Address</dd>
+    <dt class="col-sm-3">Status</dt><dd class="col-sm-9">@(Model.IsActive ? "Active" : "Inactive")</dd>
+  </dl>
+</div></div>
+
+<h5>Leave History</h5>
+<div class="card"><table class="table mb-0">
+  <thead><tr><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th></tr></thead>
+  <tbody>
+  @foreach (var l in Model.LeaveRequests.OrderByDescending(x => x.AppliedOn))
+  {
+    <tr><td>@l.LeaveType</td><td>@l.FromDate.ToString("dd MMM yyyy")</td><td>@l.ToDate.ToString("dd MMM yyyy")</td><td>@l.Days</td><td>@l.Status</td></tr>
+  }
+  @if (!Model.LeaveRequests.Any()) { <tr><td colspan="5" class="text-muted text-center py-3">No leave requests.</td></tr> }
+  </tbody>
+</table></div>

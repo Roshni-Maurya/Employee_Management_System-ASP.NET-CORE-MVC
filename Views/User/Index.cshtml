@@ -1,0 +1,46 @@
+@model Employee?
+@{ ViewData["Title"] = "My Profile"; }
+
+@if (Model == null)
+{
+  <div class="alert alert-warning">Your employee record was not found. Please contact HR/Admin.</div>
+}
+else
+{
+  <h3 class="mb-3">Welcome, @Model.FullName</h3>
+
+  @if (ViewBag.Decided != null)
+  {
+    foreach (LeaveRequest l in ViewBag.Decided)
+    {
+      var ok = l.Status == "Approved";
+      <div class="alert alert-@(ok ? "success" : "danger") py-2">
+        Your <strong>@l.LeaveType</strong> leave (@l.FromDate.ToString("dd MMM") - @l.ToDate.ToString("dd MMM yyyy"))
+        has been <strong>@(ok ? "APPROVED" : "REJECTED")</strong>.
+        @if (!string.IsNullOrWhiteSpace(l.AdminRemark)) { <span> Remark: @l.AdminRemark</span> }
+        <a asp-action="Leaves" class="alert-link ms-2">View</a>
+      </div>
+    }
+  }
+  <div class="row g-3">
+    <div class="col-md-8">
+      <div class="card shadow-sm"><div class="card-header fw-bold">My Profile</div><div class="card-body">
+        <dl class="row mb-0">
+          <dt class="col-sm-4">Employee Code</dt><dd class="col-sm-8">@Model.EmployeeCode</dd>
+          <dt class="col-sm-4">Email</dt><dd class="col-sm-8">@Model.Email</dd>
+          <dt class="col-sm-4">Phone</dt><dd class="col-sm-8">@Model.Phone</dd>
+          <dt class="col-sm-4">Department</dt><dd class="col-sm-8">@Model.Department?.Name</dd>
+          <dt class="col-sm-4">Designation</dt><dd class="col-sm-8">@Model.Designation</dd>
+          <dt class="col-sm-4">Joined On</dt><dd class="col-sm-8">@Model.DateOfJoining.ToString("dd MMM yyyy")</dd>
+          <dt class="col-sm-4">Address</dt><dd class="col-sm-8">@Model.Address</dd>
+        </dl>
+      </div></div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-bg-warning mb-3"><div class="card-body"><div class="small">Pending Leaves</div><div class="fs-3 fw-bold">@ViewBag.Pending</div></div></div>
+      <div class="card text-bg-success mb-3"><div class="card-body"><div class="small">Approved Leaves</div><div class="fs-3 fw-bold">@ViewBag.Approved</div></div></div>
+      <div class="card text-bg-danger mb-3"><div class="card-body"><div class="small">Rejected Leaves</div><div class="fs-3 fw-bold">@ViewBag.Rejected</div></div></div>
+      <a class="btn btn-primary w-100" asp-action="ApplyLeave">Apply for Leave</a>
+    </div>
+  </div>
+}

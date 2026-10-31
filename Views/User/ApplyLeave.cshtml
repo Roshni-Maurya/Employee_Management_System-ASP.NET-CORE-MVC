@@ -1,0 +1,22 @@
+@model LeaveRequest
+@{ ViewData["Title"] = "Apply Leave"; }
+
+<div class="row justify-content-center"><div class="col-md-6">
+<div class="card shadow-sm"><div class="card-body p-4">
+  <h4 class="mb-3">Apply for Leave</h4>
+  <form asp-action="ApplyLeave" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3"><label asp-for="LeaveType" class="form-label"></label>
+      <select asp-for="LeaveType" class="form-select"><option>Casual</option><option>Sick</option><option>Paid</option><option>Unpaid</option></select></div>
+    <div class="row">
+      <div class="col mb-3"><label asp-for="FromDate" class="form-label"></label>
+        <input asp-for="FromDate" class="form-control" /><span asp-validation-for="FromDate" class="text-danger"></span></div>
+      <div class="col mb-3"><label asp-for="ToDate" class="form-label"></label>
+        <input asp-for="ToDate" class="form-control" /><span asp-validation-for="ToDate" class="text-danger"></span></div>
+    </div>
+    <div class="mb-3"><label asp-for="Reason" class="form-label"></label>
+      <textarea asp-for="Reason" class="form-control" rows="3"></textarea><span asp-validation-for="Reason" class="text-danger"></span></div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+    <a class="btn btn-secondary" asp-action="Leaves">Cancel</a>
+  </form>
+</div></div></div></div>

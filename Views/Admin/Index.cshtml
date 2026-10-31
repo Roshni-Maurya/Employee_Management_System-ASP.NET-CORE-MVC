@@ -1,0 +1,46 @@
+@model AdminDashboardViewModel
+@{ ViewData["Title"] = "Dashboard"; }
+
+<h3 class="mb-4">Admin Dashboard</h3>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3"><div class="card text-bg-primary"><div class="card-body">
+    <div class="small">Total Employees</div><div class="fs-2 fw-bold">@Model.TotalEmployees</div></div></div></div>
+  <div class="col-md-3"><div class="card text-bg-success"><div class="card-body">
+    <div class="small">Active Employees</div><div class="fs-2 fw-bold">@Model.ActiveEmployees</div></div></div></div>
+  <div class="col-md-3"><div class="card text-bg-info"><div class="card-body">
+    <div class="small">Departments</div><div class="fs-2 fw-bold">@Model.TotalDepartments</div></div></div></div>
+  <div class="col-md-3"><div class="card text-bg-warning"><div class="card-body">
+    <div class="small">Pending Leaves</div><div class="fs-2 fw-bold">@Model.PendingLeaves</div></div></div></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-5">
+    <div class="card"><div class="card-header fw-bold">Employees by Department</div>
+      <ul class="list-group list-group-flush">
+        @foreach (var d in Model.EmployeesByDepartment)
+        {
+          <li class="list-group-item d-flex justify-content-between">@d.Key <span class="badge bg-secondary">@d.Value</span></li>
+        }
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-7">
+    <div class="card"><div class="card-header fw-bold">Recently Added Employees</div>
+      <table class="table mb-0">
+        <thead><tr><th>Code</th><th>Name</th><th>Department</th></tr></thead>
+        <tbody>
+        @foreach (var e in Model.RecentEmployees)
+        {
+          <tr><td>@e.EmployeeCode</td><td>@e.FullName</td><td>@e.Department?.Name</td></tr>
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="mt-4">
+  <a class="btn btn-primary" asp-controller="Employees" asp-action="Create">+ Add Employee</a>
+  <a class="btn btn-outline-secondary" asp-controller="Leaves" asp-action="Index" asp-route-status="Pending">Review Pending Leaves</a>
+</div>

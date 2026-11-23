@@ -4,7 +4,7 @@ namespace Employee_Management_System.Models
 {
     public class RegisterViewModel
     {
-        [Required, EmailAddress]
+        [Required, EmailAddress, EmailDomainTypo]
         public string Email { get; set; } = "";
 
         [Required, DataType(DataType.Password)]
@@ -17,7 +17,7 @@ namespace Employee_Management_System.Models
 
     public class LoginViewModel
     {
-        [Required, EmailAddress]
+        [Required, EmailAddress , EmailDomainTypo]
         public string Email { get; set; } = "";
 
         [Required, DataType(DataType.Password)]

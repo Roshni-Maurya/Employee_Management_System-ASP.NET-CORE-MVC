@@ -231,8 +231,8 @@ namespace Employee_Management_System.Migrations
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<decimal>("Salary")
                         .HasColumnType("decimal(18,2)");

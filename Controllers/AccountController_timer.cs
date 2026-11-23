@@ -30,9 +30,19 @@ namespace Employee_Management_System.Controllers
             _audit = audit;
         }
 
+        // Login ho chuke user ko dobara Login/Register page nahi dikhana
+        private IActionResult RedirectToHome() =>
+            User.IsInRole("Admin")
+                ? RedirectToAction("Index", "Admin")
+                : RedirectToAction("Index", "User");
+
         // ---------------- Register ----------------
         [HttpGet]
-        public IActionResult Register() => View();
+        public IActionResult Register()
+        {
+            if (User.Identity?.IsAuthenticated == true) return RedirectToHome();
+            return View();
+        }
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -73,7 +83,11 @@ namespace Employee_Management_System.Controllers
 
         // ---------------- Login / Logout ----------------
         [HttpGet]
-        public IActionResult Login() => View();
+        public IActionResult Login()
+        {
+            if (User.Identity?.IsAuthenticated == true) return RedirectToHome();
+            return View();
+        }
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
@@ -96,8 +110,19 @@ namespace Employee_Management_System.Controllers
 
             if (result.IsLockedOut)
             {
+                // Lock kab khulega, ye nikaalo taaki Login page par countdown timer chale
+                var lockedUser = await _userManager.FindByEmailAsync(model.Email);
+                DateTimeOffset? lockoutEnd = lockedUser != null
+                    ? await _userManager.GetLockoutEndDateAsync(lockedUser)
+                    : null;
+
+                int seconds = lockoutEnd.HasValue
+                    ? (int)Math.Ceiling((lockoutEnd.Value - DateTimeOffset.UtcNow).TotalSeconds)
+                    : 0;
+                ViewBag.LockoutSeconds = Math.Max(seconds, 0);
+
                 await _audit.LogAsync("Login Locked", "Account", null, "Account locked after too many failed attempts", model.Email);
-                ModelState.AddModelError("", "Too many failed attempts. Account locked for 15 minutes.");
+                ModelState.AddModelError("", "Too many failed attempts. Your account is temporarily locked.");
                 return View(model);
             }
 
@@ -118,7 +143,11 @@ namespace Employee_Management_System.Controllers
 
         // ---------------- Forgot password ----------------
         [HttpGet]
-        public IActionResult ForgotPassword() => View();
+        public IActionResult ForgotPassword()
+        {
+            if (User.Identity?.IsAuthenticated == true) return RedirectToHome();
+            return View();
+        }
 
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)

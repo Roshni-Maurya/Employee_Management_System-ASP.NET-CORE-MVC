@@ -4,6 +4,8 @@
 
 # Employee Management System - Email + Security Guide
 
+# password change code -> dotnet user-secrets set "SeedAdmin:Password" "Admin@1234" 
+
 ## PART 1: Setup (sirf ek baar)
 
 ### A) Gmail App Password banao

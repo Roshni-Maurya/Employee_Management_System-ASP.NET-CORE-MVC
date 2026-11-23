@@ -14,10 +14,10 @@ namespace Employee_Management_System.Models
         [Display(Name = "Full Name")]
         public string FullName { get; set; } = "";
 
-        [Required, EmailAddress, StringLength(150)]
+        [Required, EmailAddress, StringLength(150), EmailDomainTypo]
         public string Email { get; set; } = "";
 
-        [Required, StringLength(15)]
+        [Required, StringLength(10)]
         [RegularExpression(@"^[0-9]{10}$", ErrorMessage = "Enter a valid 10 digit phone number")]
         public string Phone { get; set; } = "";
 

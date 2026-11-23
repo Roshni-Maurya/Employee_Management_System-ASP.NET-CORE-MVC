@@ -8,6 +8,9 @@
         <h4 class="mb-3 text-center">Login</h4>
         <form asp-action="Login" method="post">
           <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+          <div id="lockBox" class="alert alert-warning text-center py-2" style="display:none">
+            <i class="bi bi-lock-fill me-1"></i>Account locked. Try again in <strong id="lockTimer">--:--</strong>
+          </div>
           <div class="mb-3">
             <label asp-for="Email" class="form-label"></label>
             <input asp-for="Email" class="form-control" />
@@ -22,7 +25,7 @@
             <input asp-for="RememberMe" class="form-check-input" />
             <label asp-for="RememberMe" class="form-check-label"></label>
           </div>
-          <button type="submit" class="btn btn-primary w-100">Login</button>
+          <button type="submit" id="loginBtn" class="btn btn-primary w-100">Login</button>
         </form>
         <p class="text-center mt-3 mb-1"><a asp-action="ForgotPassword">Forgot password?</a></p>
         <p class="text-center mb-0"><a asp-action="Register">Employee? Create your account</a></p>
@@ -30,3 +33,32 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Lock hone par countdown chalta hai aur Login button tab tak band rehta hai
+  var lockSeconds = @(ViewBag.LockoutSeconds ?? 0);
+  if (lockSeconds > 0) {
+    var box = document.getElementById('lockBox');
+    var timer = document.getElementById('lockTimer');
+    var btn = document.getElementById('loginBtn');
+    var remaining = lockSeconds;
+    box.style.display = 'block';
+    btn.disabled = true;
+
+    var tick = function () {
+      var m = Math.floor(remaining / 60);
+      var sec = remaining % 60;
+      timer.textContent = (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+      if (remaining <= 0) {
+        clearInterval(handle);
+        box.className = 'alert alert-success text-center py-2';
+        box.textContent = 'You can try logging in again now.';
+        btn.disabled = false;
+        return;
+      }
+      remaining--;
+    };
+    tick();
+    var handle = setInterval(tick, 1000);
+  }
+</script>

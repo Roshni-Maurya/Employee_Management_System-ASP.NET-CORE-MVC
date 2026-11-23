@@ -1,38 +1,45 @@
 @model AdminDashboardViewModel
 @{ ViewData["Title"] = "Dashboard"; }
 
-<h3 class="mb-4">Admin Dashboard</h3>
+<h3 class="mb-4"><i class="bi bi-speedometer2 me-2"></i>Admin Dashboard</h3>
 
 <div class="row g-3 mb-4">
-  <div class="col-md-3"><div class="card text-bg-primary"><div class="card-body">
-    <div class="small">Total Employees</div><div class="fs-2 fw-bold">@Model.TotalEmployees</div></div></div></div>
-  <div class="col-md-3"><div class="card text-bg-success"><div class="card-body">
-    <div class="small">Active Employees</div><div class="fs-2 fw-bold">@Model.ActiveEmployees</div></div></div></div>
-  <div class="col-md-3"><div class="card text-bg-info"><div class="card-body">
-    <div class="small">Departments</div><div class="fs-2 fw-bold">@Model.TotalDepartments</div></div></div></div>
-  <div class="col-md-3"><div class="card text-bg-warning"><div class="card-body">
-    <div class="small">Pending Leaves</div><div class="fs-2 fw-bold">@Model.PendingLeaves</div></div></div></div>
+  <div class="col-md-3"><div class="card text-bg-primary h-100"><div class="card-body d-flex justify-content-between align-items-center">
+    <div><div class="small">Total Employees</div><div class="fs-2 fw-bold">@Model.TotalEmployees</div></div>
+    <i class="bi bi-people-fill fs-1 opacity-75"></i></div></div></div>
+  <div class="col-md-3"><div class="card text-bg-success h-100"><div class="card-body d-flex justify-content-between align-items-center">
+    <div><div class="small">Active Employees</div><div class="fs-2 fw-bold">@Model.ActiveEmployees</div></div>
+    <i class="bi bi-person-check-fill fs-1 opacity-75"></i></div></div></div>
+  <div class="col-md-3"><div class="card text-bg-info h-100"><div class="card-body d-flex justify-content-between align-items-center">
+    <div><div class="small">Departments</div><div class="fs-2 fw-bold">@Model.TotalDepartments</div></div>
+    <i class="bi bi-building fs-1 opacity-75"></i></div></div></div>
+  <div class="col-md-3"><div class="card text-bg-warning h-100"><div class="card-body d-flex justify-content-between align-items-center">
+    <div><div class="small">Pending Leaves</div><div class="fs-2 fw-bold">@Model.PendingLeaves</div></div>
+    <i class="bi bi-hourglass-split fs-1 opacity-75"></i></div></div></div>
 </div>
 
 <div class="row g-3">
   <div class="col-md-5">
-    <div class="card"><div class="card-header fw-bold">Employees by Department</div>
+    <div class="card"><div class="card-header fw-bold"><i class="bi bi-diagram-3 me-2"></i>Employees by Department</div>
       <ul class="list-group list-group-flush">
         @foreach (var d in Model.EmployeesByDepartment)
         {
-          <li class="list-group-item d-flex justify-content-between">@d.Key <span class="badge bg-secondary">@d.Value</span></li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-building text-secondary me-2"></i>@d.Key</span>
+            <span class="badge bg-secondary">@d.Value</span>
+          </li>
         }
       </ul>
     </div>
   </div>
   <div class="col-md-7">
-    <div class="card"><div class="card-header fw-bold">Recently Added Employees</div>
+    <div class="card"><div class="card-header fw-bold"><i class="bi bi-person-plus me-2"></i>Recently Added Employees</div>
       <table class="table mb-0">
         <thead><tr><th>Code</th><th>Name</th><th>Department</th></tr></thead>
         <tbody>
         @foreach (var e in Model.RecentEmployees)
         {
-          <tr><td>@e.EmployeeCode</td><td>@e.FullName</td><td>@e.Department?.Name</td></tr>
+          <tr><td>@e.EmployeeCode</td><td><i class="bi bi-person-circle text-secondary me-1"></i>@e.FullName</td><td>@e.Department?.Name</td></tr>
         }
         </tbody>
       </table>
@@ -41,6 +48,7 @@
 </div>
 
 <div class="mt-4">
-  <a class="btn btn-primary" asp-controller="Employees" asp-action="Create">+ Add Employee</a>
-  <a class="btn btn-outline-secondary" asp-controller="Leaves" asp-action="Index" asp-route-status="Pending">Review Pending Leaves</a>
+  <a class="btn btn-primary" asp-controller="Employees" asp-action="Create"><i class="bi bi-person-plus-fill me-1"></i>Add Employee</a>
+  <a class="btn btn-outline-secondary" asp-controller="Leaves" asp-action="Index" asp-route-status="Pending"><i class="bi bi-calendar-check me-1"></i>Review Pending Leaves</a>
+  <a class="btn btn-outline-secondary" asp-controller="Audit" asp-action="Index"><i class="bi bi-clipboard-data me-1"></i>Audit Log</a>
 </div>

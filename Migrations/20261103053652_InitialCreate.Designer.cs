@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Employee_Management_System.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261031181859_InitialCreate")]
+    [Migration("20261103053652_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -234,8 +234,8 @@ namespace Employee_Management_System.Migrations
 
                     b.Property<string>("Phone")
                         .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<decimal>("Salary")
                         .HasColumnType("decimal(18,2)");
